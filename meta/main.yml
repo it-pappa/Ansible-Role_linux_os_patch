@@ -6,7 +6,10 @@ galaxy_info:
   license: BSD-3-Clause
   min_ansible_version: 2.11
   platforms:
-    - name: EL
+    - name: Centos
+    - name: Debian
+    - name: RHEL8
+    - name: ubuntu
       versions:
         - 8
   galaxy_tags:
