@@ -2,9 +2,9 @@
 # Tasks to run
 
 # Resolve Linux Distro
-- ansible.builtin.include: 01_centos_redhat.yml
+- ansible.builtin.include: 01_patch_centos_redhat.yml
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Rocky Linux'
-- ansible.builtin.include: 02_ubuntu_debian.yml
+- ansible.builtin.include: 02_patch_ubuntu_debian.yml
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
 
 
