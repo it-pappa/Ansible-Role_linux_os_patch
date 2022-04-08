@@ -27,3 +27,4 @@
   when: reboot_required_file.stat.exists and (ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian')
   register: reboot_started_ubuntu
   ignore_errors: true
+  
