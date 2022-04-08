@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: patch_linux_host
+  author: Dan Eckholm
+  description: Patch Linux hosts (Centos/Ubuntu) 
+  license: BSD-3-Clause
+  min_ansible_version: 2.11
+  platforms:
+    - name: EL
+      versions:
+        - 8
+  galaxy_tags:
+    - linux
+    - patch
+
+
+dependencies: []

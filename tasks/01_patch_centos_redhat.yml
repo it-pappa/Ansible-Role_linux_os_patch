@@ -1,0 +1,21 @@
+---
+- name:  Patch Task 1 - upgrade kernel package on RHEL/CentOS server
+  ansible.builtin.yum:
+   name="kernel"
+   state=latest
+  when: app_process_check.stdout == "process_not_running" and ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Rocky Linux'
+  register: yum_update
+
+- name: Patch Task 2 - check if reboot required after kernel update on CentOS/RedHat servers
+  ansible.builtin.shell: KERNEL_NEW=$(rpm -q --last kernel |head -1 | awk '{print $1}' | sed 's/kernel-//'); KERNEL_NOW=$(uname -r); if [[ $KERNEL_NEW != $KERNEL_NOW ]]; then echo "reboot_needed"; else echo "reboot_not_needed"; fi
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' 
+  ignore_errors: true
+  register: reboot_required
+
+- name: Patch Task 3 - Reboot CentOS/RedHat systems if kernel updated
+  ansible.builtin.command: shutdown -r +1  "Rebooting CentOS/RedHat Servers After Kernel Patching"
+  ansible.builtin.async: 0
+  poll: 0
+  when: reboot_required.stdout == "reboot_needed" and (ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Rocky Linux')
+  register: reboot_started
+  ignore_errors: true

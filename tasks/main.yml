@@ -1,0 +1,25 @@
+---
+# Tasks to run
+
+# Resolve Linux Distro
+- ansible.builtin.include: 01_centos_redhat.yml
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Rocky Linux'
+- ansible.builtin.include: 02_ubuntu_debian.yml
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+
+# If this role is ran locally, these tasks will fail if the server restarts. 
+- name: Task // - pause for 180 secs
+  ansible.builtin.pause:
+    minutes: 3
+
+
+- name: Task // - check if all the systems responding to ssh
+  local_action:
+    module: ansible.builtin.wait_for
+      host={{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}
+      port=22
+      search_regex=OpenSSH
+      delay=15
+      timeout=300
+      state=started

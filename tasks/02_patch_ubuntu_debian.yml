@@ -1,0 +1,29 @@
+---
+- name: Patch Task 1 - upgrade kernel package on Ubuntu server
+  ansible.builtin.apt:
+    update_cache: yes
+    force_apt_get: yes
+    cache_valid_time: 3600
+    name: linux-image-generic
+    state: latest
+  when: app_process_check.stdout == "process_not_running" and ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+  register: apt_update
+
+
+- name: Patch Task 2 - Check if a reboot is required after kernel update on Ubuntu/Debian servers
+  register: reboot_required_file
+  ansible.builtin.stat: path=/var/run/reboot-required get_md5=no
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+
+- name: Patch Task 3 - Reboot Ubuntu/Debian Servers if kernel updated
+  ansible.builtin.reboot:
+    msg: "Rebooting Ubuntu/Debian Servers After Kernel Patching"
+    connect_timeout: 5
+    reboot_timeout: 300
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: uptime
+  when: reboot_required_file.stat.exists and (ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian')
+  register: reboot_started_ubuntu
+  ignore_errors: true
